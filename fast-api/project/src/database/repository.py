@@ -1,5 +1,5 @@
 
-from sqlalchemy import select, Integer, Float, distinct
+from sqlalchemy import select, Integer, Float, distinct, func
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from config.redis_config import redis_config
@@ -10,6 +10,7 @@ import datetime
 import json
 import logging
 from config.mongodb_config import mongo_db, collection
+
 
 class SongRepository:
     
@@ -28,14 +29,14 @@ class SongRepository:
             session.close()
 
     """
-    노래 name 에 해당하는 곡 정보 조회
+    노래 name 에 해당하는 곡 정보 조회 (대소문자 구분X)
     :song_name  : 음악 제목
     :return 이름 같은 곡 존재 가능
     """
     def get_song_by_name(self, song_name: str) -> List[Song] | None:
         try:
             session = SessionFactory()
-            return session.query(Song).filter(Song.name == song_name).all()
+            return session.query(Song).filter(func.lower(Song.name) == song_name.lower()).all()
         finally:
             session.close()
 
@@ -192,8 +193,6 @@ class SongQuizRepository:
     
     def get_all_song_similarity(self, day):
 
-        # new_day = datetime.date.today() + datetime.timedelta(days=1)
-
         key = str(day) + "_song_quiz"
         # song_quiz 에 저장한 모든 정보 가져오기
         similarity_datas = self.rd.hgetall(key)
@@ -290,8 +289,6 @@ class SongQuizRankRepository:
 
 class SongVectorRepository():
 
-
-    
     """
     song_vector collection 에 vector 데이터 저장
     """
@@ -309,8 +306,3 @@ class SongVectorRepository():
         vector_data = list(collection.find({}))
         return vector_data
 
-
-
-    
-
-    

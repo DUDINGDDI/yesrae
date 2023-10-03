@@ -18,10 +18,7 @@ CRON 사용 해서 오후 11시 30분에 선정 -> 인기도 상위 100 에서 �
 계산한 유사도를 바탕으로 순위 reids 에 저장
 """
 
-"""
-def get_song_quiz_service():
-    return SongQuizService()
-"""
+
 song_quiz_service = SongQuizService()
 
 

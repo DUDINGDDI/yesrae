@@ -3,6 +3,9 @@ from database.orm import Song
 from database.repository import SongRepository, SongVectorRepository
 from schema.response import RecommendSongSchema
 from util.song_annoy import annoy
+import logging
+
+logger = logging.getLogger(__name__)
 
 class SongRecommend:
 

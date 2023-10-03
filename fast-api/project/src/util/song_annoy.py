@@ -9,7 +9,6 @@ import numpy as np
 import wget
 import os
 from annoy import AnnoyIndex
-#from song_analyze import deleteFile, getMelody, getTempo, loadmusic, getMusic
 from database.repository import SongRepository
 import logging
 
@@ -17,7 +16,7 @@ import logging
 def annoy(target_songs):
 
     # 벡터의 길이
-    f = 12
+    f = 9
 
     # 노래 데이터 가져와서 annoy 실행 -> 가까운 노래 ID 추출
 
@@ -41,13 +40,15 @@ def annoy(target_songs):
         if data.id in target_songs:
             target_idx.append(idx)
 
+        # song_feature = [data.acousticness, data.danceability, data.energy, data.instrumentalness, 
+        #                 data.liveness, data.loudness, data.mode, data.speechiness, data.tempo, data.time_signature, data.tune, data.valence]
         song_feature = [data.acousticness, data.danceability, data.energy, data.instrumentalness, 
-                        data.liveness, data.loudness, data.mode, data.speechiness, data.tempo, data.time_signature, data.tune, data.valence]
+                        data.liveness, data.loudness, data.speechiness, data.tempo, data.valence]
 
         t.add_item(idx, song_feature)
     
     
-    t.build(12)
+    t.build(5)
     t.save('annoy.ann')
 
     u = AnnoyIndex(f, 'angular')
@@ -60,11 +61,16 @@ def annoy(target_songs):
     # 추천받을 노래들의 idx
     for idx in target_idx:
 
-        annoy_result = u.get_nns_by_item(idx, 10)
+        annoy_result = u.get_nns_by_item(idx, 3)
 
         for result in annoy_result:
             if idx != result:
                 logging.info(f"{songs[idx]} 에 연관된 추천 노래 ID {songs[result]}")
+
+                #만약 librosa 까지 추가한다면 
+
+
+
                 recommend_songs.add(songs[result])
     
     logging.info(f"추천 노래들 개수 : {len(recommend_songs)}")

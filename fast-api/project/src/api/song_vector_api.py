@@ -18,8 +18,8 @@ def save_song_vector(
 
 scheduler = BackgroundScheduler()
 
-# 스케줄러 실행되는 것 확인 완료
+# 스케줄러 이용해서 벡터값 추출해 song_vector 에 저장 완료
 # 시간 설정
-#scheduler.add_job(save_song_vector, "cron", hour= 7, minute = 42)
+#scheduler.add_job(save_song_vector, "cron", hour= 15, minute = 26)
 
-scheduler.start()
+#scheduler.start()

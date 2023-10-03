@@ -83,35 +83,19 @@ def getTempo(y, sr):
 # 입력 받은 노래의 멜로디 정보 추출
 def getMelody(y, sr, today_song_file = None, method="mfcc"):
 
-    # 간격 조절
-
-    if method == "librosa_mfcc":
-        feature = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=13).transpose(0, 1)
-    elif method == "kaldi_mfcc":
-        y, sr = torchaudio.load(today_song_file)
-        feature = torchaudio.compliance.kaldi.mfcc(y, num_ceps=40, num_mel_bins=40).numpy()
-    
-    else:
     # 피치 정보
-        melody, _ = librosa.core.piptrack(y=y, sr=sr)
+    melody, _ = librosa.core.piptrack(y=y, sr=sr)
     # S : 스펙토그램
-    # mel_freqs = librosa.feature.melspectrogram(S=melody, sr=sr, n_mels=60)
-        feature = librosa.feature.melspectrogram(S=melody, sr=sr)
-    
-    print("mel_freq_shape : ", feature.shape)
-    print("type : ", type(feature[0][0]))
+    feature = librosa.feature.melspectrogram(S=melody, sr=sr)
 
     # 평균
     mel_freqs_mean = np.mean(feature, axis=1)
     # 분산
     mel_freqs_var = np.var(feature, axis=1)
-    print("mel_freq_mean_shape :", mel_freqs_mean.shape)
-    print("mel_freqs_var_shape :", mel_freqs_var.shape)
 
     mel_mean_var_concat = np.concatenate((mel_freqs_mean, mel_freqs_var), axis = 0)
-    print("mel_mean_var_concat : ",  mel_mean_var_concat.shape)
-    return  
 
+    return  mel_mean_var_concat
 
 
 """
@@ -121,7 +105,6 @@ def getMelody(y, sr, today_song_file = None, method="mfcc"):
 def deleteFile(filename):
     if os.path.isfile(filename):
         os.remove(filename)
-
 
 
 """
@@ -181,71 +164,4 @@ def calSimilarity(tempo1, tempo2, mel_mean_var_concat1, mel_mean_var_concat2):
     similarity_score = (20 * cosine_sim + (1 / (1 + tempo_difference))) / 21
 
     return similarity_score
-
-
-"""
-test
-"""
-
-if __name__ == "__main__":
-
-    try:
-        # 음원 파일 저장하는 경로
-        root_path = os.getcwd() +"\\"
-        print(f"root path : {root_path}")
-
-        # root_path = root_path + "\\src"
-        # os.chdir(root_path)
-
-        # 오늘의 노래
-        today_song_url  = 'https://p.scdn.co/mp3-preview/8cd16a87465e35652134fb7cd4a276812690d750?cid=c551bf26249e4acf9eab170aed614fab'
-
-        today_song_name = getMusic(today_song_url)
-        today_song_file = root_path + today_song_name
-
-        y1, sr1 = loadmusic(today_song_file)
-
-        mel_mean_var_concat_1 = getMelody(y1, sr1)
-
-        # 30초 미리 듣기 API 저장
-        url = ['https://p.scdn.co/mp3-preview/a76a5bfcf5145901bd4b7ca88e248a2d897950d6?cid=c551bf26249e4acf9eab170aed614fab', 'https://p.scdn.co/mp3-preview/492d170729d672b0e224f399e116d5dafb80755f?cid=c551bf26249e4acf9eab170aed614fab'
-            'https://p.scdn.co/mp3-preview/598e05a7fd20278aca5477e1993b252e8fc97daf?cid=c551bf26249e4acf9eab170aed614fab', 'https://p.scdn.co/mp3-preview/8dd93c0af476c8cce9a49b7ad7554c3bb1880555?cid=c551bf26249e4acf9eab170aed614fab',
-            'https://p.scdn.co/mp3-preview/29bcbadcb6ee2d7ad5564c2ee5f17520afb1489b?cid=c551bf26249e4acf9eab170aed614fab', 'https://p.scdn.co/mp3-preview/7d0c01de9171bfde69ceeda7625f387f710dcc5b?cid=c551bf26249e4acf9eab170aed614fab']
-
-        for idx, input_url in enumerate(url):
-
-            # 음악 파일 load
-            mp3_name = getMusic(input_url)
-            
-            mp3_file = root_path + mp3_name
-
-            print("비교하는 노래 : {}".format(mp3_name))
-
-            y2, sr2 = loadmusic(mp3_file)
-
-            # 음원 파일에서 박자, 멜로디 추출
-            mel_mean_var_concat_2 = getMelody(y2, sr2)
-
-            # txt 파일 저장
-            # output_file_1 = "mel_spectrogram_1.txt"
-            # output_file_2 = "mel_spectrogram_2.txt"
-            # with np.printoptions(threshold=np.inf):
-            #     np.savetxt(output_file_1, mel_mean_var_concat_1)
-            #     #print(mel_freqs_1)
-            
-            # with np.printoptions(threshold=np.inf):
-            #     np.savetxt(output_file_2, mel_mean_var_concat_2)
-            #     #print(mel_freqs_2)
-            
-            # 유사도 결과
-            similarity_score = calSimilarity(getTempo(y1, sr1), getTempo(y2, sr2), mel_mean_var_concat_1, mel_mean_var_concat_2)
-            print(f"Overall Similarity Score: {similarity_score}")
-
-            deleteFile(mp3_name)
-            deleteFile(today_song_name)
-        
-    except Exception as e:
-        print("error :", e)
-        deleteFile(mp3_name)
-        deleteFile(today_song_name)
 

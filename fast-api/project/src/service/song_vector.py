@@ -4,6 +4,7 @@ from database.repository import SongRepository, SongVectorRepository
 from schema.request import RecommendSongRequest
 from util.song_analyze import getMusic, loadmusic, getMelody, deleteFile
 import os
+import logging
 
 class SongVector:
     def __init__(self):
@@ -35,9 +36,7 @@ class SongVector:
 
                 y, sr = loadmusic(song_file)
 
-                mel_mean_var_concat = getMelody(y, sr, song_file, "kaldi_mfcc")
-
-                print("type : ", type(mel_mean_var_concat))
+                mel_mean_var_concat = getMelody(y, sr)
 
                 song_vector = {
                     "id" : song.id,
