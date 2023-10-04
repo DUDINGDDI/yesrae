@@ -124,9 +124,6 @@ class SongRepository:
     def get_similar_song_name(self, song_name : str)  -> List[Song] | None:
         try:
             session = SessionFactory()
-            #return session.query(distinct(Song.name), Song.id, Song.artist_name).filter(Song.name.like(f'{song_name}%')).limit(5).all()
-            #return session.query(Song).filter(distinct(Song.name.startswith(song_name))).limit(5).all()
-            subq = session.query(Song.name).filter(Song.name.startswith(song_name)).distinct().limit(5).subquery()
             return session.query(Song).filter(Song.name.startswith(song_name)).distinct().limit(5).all()
         finally:
             session.close()
@@ -296,13 +293,3 @@ class SongVectorRepository():
         song_vector_id = collection.insert_one(song_vector).inserted_id
 
         logging.info(f"song_vector_id : {song_vector_id}")
-
-    
-    """
-    song_vector collection 에 저장되어 있는 vector 데이터 모두 조회
-    """
-    def get_vector_data(self):
-        
-        vector_data = list(collection.find({}))
-        return vector_data
-

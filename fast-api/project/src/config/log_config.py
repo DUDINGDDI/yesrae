@@ -8,7 +8,7 @@ logging.basicConfig(
 )
 
 
-## 터미널 출력 로그 
+# 터미널 출력 로그 
 console_handler = logging.StreamHandler()
 console_handler.setLevel(logging.INFO)  # 터미널에 출력할 로그 레벨 설정
 

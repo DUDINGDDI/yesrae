@@ -52,7 +52,7 @@ def loadmusic(mp3_file):
     # sr : 샘플링 주파수(Sampling Rate), 연속적 신호에서 얻어진 초당 샘플링 횟수
 
     y, sr = librosa.load(mp3_file)
-    print("duration ", len(y)/sr)
+    #print("duration ", len(y)/sr)
     return y, sr
 
 
@@ -81,7 +81,7 @@ def getTempo(y, sr):
 :return : 멜 스펙토그램 
 """
 # 입력 받은 노래의 멜로디 정보 추출
-def getMelody(y, sr, today_song_file = None, method="mfcc"):
+def getMelody(y, sr):
 
     # 피치 정보
     melody, _ = librosa.core.piptrack(y=y, sr=sr)
@@ -129,8 +129,8 @@ def calSimilarity_2D(tempo1, tempo2, mel_freq1, mel_freq2):
      # 두 곡의 mel_freqs 간의 코사인 유사성 계산
     cosine_sim = 1 - distance.cosine(mel_freq1_res.ravel(), mel_freq2_res.ravel())
 
-    print(f"Tempo Difference: {tempo_difference}")
-    print(f"Mel Frequency Cosine Similarity: {cosine_sim}")
+    #print(f"Tempo Difference: {tempo_difference}")
+    #print(f"Mel Frequency Cosine Similarity: {cosine_sim}")
 
     # 템포 와 mel_freqs 유사성을 결합하여 유사도 계산
     similarity_score = (20 * cosine_sim + (1 / (1 + tempo_difference))) / 21
@@ -157,8 +157,8 @@ def calSimilarity(tempo1, tempo2, mel_mean_var_concat1, mel_mean_var_concat2):
     # 두 곡의 mel_freqs 간의 코사인 유사성 계산
     cosine_sim = 1 - distance.cosine(mel_mean_var_concat1, mel_mean_var_concat2)
 
-    print(f"Tempo Difference: {tempo_difference}")
-    print(f"Mel Frequency Cosine Similarity: {cosine_sim}")
+    #print(f"Tempo Difference: {tempo_difference}")
+    #print(f"Mel Frequency Cosine Similarity: {cosine_sim}")
 
     # 템포 와 mel_freqs 유사성을 결합하여 유사도 계산
     similarity_score = (20 * cosine_sim + (1 / (1 + tempo_difference))) / 21
