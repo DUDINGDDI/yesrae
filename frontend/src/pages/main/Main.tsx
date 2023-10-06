@@ -72,7 +72,7 @@ export default function Main() {
         </div>
         <main className="w-10/12 pt-12 pl-20 scrollbar-hide">
           <img
-            src="/src/assets/AD.png.png"
+            src="https://yangkidsbucket.s3.ap-northeast-2.amazonaws.com/AD.png.png"
             className="flex justify-center h-64 border-2 border-gray-800 w-280 "
           />
           <UserRecommend />
